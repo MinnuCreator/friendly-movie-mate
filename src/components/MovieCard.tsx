@@ -31,7 +31,7 @@ export const MovieCard = ({ title, rating, year, genre, imageUrl, id }: MovieCar
         id,
         title,
         overview: '',
-        poster_path: imageUrl,
+        poster_path: imageUrl.replace('https://image.tmdb.org/t/p/w500', ''),
         backdrop_path: '',
         release_date: year,
         vote_average: rating,

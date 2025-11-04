@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
-import { Movie } from '@/lib/tmdb';
+import { Movie, getImageUrl } from '@/lib/tmdb';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
@@ -29,7 +29,7 @@ export const WatchlistProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const { toast } = useToast();
 
   // Load watchlist from Supabase
-  const loadWatchlist = async () => {
+  const loadWatchlist = useCallback(async () => {
     if (!user) return;
 
     setLoading(true);
@@ -54,7 +54,7 @@ export const WatchlistProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const movies: Movie[] = data.map(item => ({
         id: item.movie_id,
         title: item.movie_title,
-        poster_path: item.movie_poster_path || '',
+        poster_path: getImageUrl(item.movie_poster_path || ''),
         release_date: item.movie_release_date || '',
         vote_average: item.movie_vote_average || 0,
         overview: '', // We'll need to fetch this if needed
@@ -74,7 +74,7 @@ export const WatchlistProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } finally {
       setLoading(false);
     }
-  };
+  }, [user, toast]);
 
   // Add movie to watchlist
   const addToWatchlist = async (movie: Movie) => {
@@ -87,7 +87,7 @@ export const WatchlistProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           user_id: user.id,
           movie_id: movie.id,
           movie_title: movie.title,
-          movie_poster_path: movie.poster_path,
+          movie_poster_path: movie.poster_path.replace('https://image.tmdb.org/t/p/w500', ''),
           movie_release_date: movie.release_date,
           movie_vote_average: movie.vote_average,
         });
@@ -156,7 +156,7 @@ export const WatchlistProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     } else {
       setWatchlist([]);
     }
-  }, [user]);
+  }, [user, loadWatchlist]);
 
   const value: WatchlistContextType = {
     watchlist,

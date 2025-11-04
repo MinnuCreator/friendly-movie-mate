@@ -7,7 +7,17 @@ import { Heart } from "lucide-react";
 const Watchlist = () => {
   const { watchlist, loading } = useWatchlist();
 
-  const formattedMovies = watchlist.map(movie => formatMovieData(movie));
+  const formattedMovies = watchlist.map(movie => ({
+    id: movie.id,
+    title: movie.title,
+    rating: movie.vote_average,
+    year: movie.release_date ? new Date(movie.release_date).getFullYear().toString() : 'N/A',
+    genre: 'Movie',
+    imageUrl: movie.poster_path,
+    overview: movie.overview,
+    releaseDate: movie.release_date,
+    backdropUrl: '',
+  }));
 
   return (
     <div className="min-h-screen bg-background">
