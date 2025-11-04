@@ -53,6 +53,7 @@ export const MovieCard = ({ title, rating, year, genre, imageUrl, id }: MovieCar
         });
       }
     } catch (error) {
+      console.error('Error updating watchlist:', error);
       toast({
         title: "Error",
         description: "Failed to update watchlist. Please try again.",
